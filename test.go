@@ -2,6 +2,9 @@ package testdynamic1
 
 import (
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 
 	"github.com/aura-studio/dynamic"
 	"github.com/aura-studio/dynamic/test/testmod"
@@ -15,7 +18,15 @@ func (*TestDynamic1) Init() {
 
 func (*TestDynamic1) Invoke(string, string) string {
 	fmt.Println(testmod.Display())
-	return ""
+	resp, err := http.Get("http://www.google.com")
+	if err != nil {
+		log.Panic(err)
+	}
+	defer resp.Body.Close()
+
+	data, _ := io.ReadAll(resp.Body)
+
+	return string(data)
 }
 
 func (*TestDynamic1) Close() {
